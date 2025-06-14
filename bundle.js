@@ -1,67 +1,67 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const range_slider_integer = require('..')
+(function () { function r (e, n, t) { function o (i, f) { if (!n[i]) { if (!e[i]) { const c = typeof require === 'function' && require; if (!f && c) return c(i, !0); if (u) return u(i, !0); const a = new Error("Cannot find module '" + i + "'"); throw a.code = 'MODULE_NOT_FOUND', a } const p = n[i] = { exports: {} }; e[i][0].call(p.exports, function (r) { const n = e[i][1][r]; return o(n || r) }, p, p.exports, r, e, n, t) } return n[i].exports } for (var u = typeof require === 'function' && require, i = 0; i < t.length; i++)o(t[i]); return o } return r })()({
+  1: [function (require, module, exports) {
+    const range_slider_integer = require('..')
 
-const opts = { min:0, max:10 }
-const rsi = range_slider_integer(opts)
+    const opts = { min: 0, max: 10 }
+    const rsi = range_slider_integer(opts)
 
-document.body.append(rsi)
+    document.body.append(rsi)
+  }, { '..': 3 }],
+  2: [function (require, module, exports) {
+    module.exports = inputInteger
 
-},{"..":3}],2:[function(require,module,exports){
-module.exports = inputInteger
+    const sheet = new CSSStyleSheet()
+    const theme = get_theme()
+    sheet.replaceSync(theme)
 
-const sheet = new CSSStyleSheet()
-const theme = get_theme()
-sheet.replaceSync(theme)
+    let id = 0
 
-var id = 0
+    function inputInteger (opts, protocol) {
+      const name = `input-integer-${id++}`
 
-function inputInteger (opts, protocol) {
-	const name = `input-integer-${id++}`
+      const { min = 1, max = 5 } = opts
+      const el = document.createElement('div')
+      const shadow = el.attachShadow({ mode: 'closed' })
 
-	const {min=1, max=5} = opts
-	const el = document.createElement('div')
-	const shadow = el.attachShadow({ mode: 'closed' })
+      const input = document.createElement('input')
+      input.type = 'number'
+      input.min = min
+      input.max = max
 
-	const input = document.createElement('input')
-	input.type = 'number'
-	input.min = min
-	input.max = max
-
-	notify = protocol({ from:name }, listen)
-    function listen (message) {
+      notify = protocol({ from: name }, listen)
+      function listen (message) {
         const { type, body } = message
         if (type == 'update') input.value = body
+      }
+
+      input.onkeyup = (e) => handle_onkeyup(e, input, min, max)
+      input.onblur = (e) => handle_on_mouseleave_and_blur(e, input, min)
+      input.onmouseleave = (e) => handle_on_mouseleave_and_blur(e, input, min)
+
+      shadow.append(input)
+      shadow.adoptedStyleSheets = [sheet]
+      return el
+
+      // handlers
+
+      function handle_onkeyup (e, input, min, max) {
+        const val = Number(e.target.value)
+        const min_len = min.toString().length
+        const val_len = val.toString().length
+        if (val > max) input.value = max
+        else if (min_len === val_len && val < min) input.value = min
+
+        notify({ from: name, type: 'update', body: val })
+      }
+
+      function handle_on_mouseleave_and_blur (e, input, min) {
+        const val = Number(e.target.value)
+        if (val < min) input.value = ''
+      }
     }
 
-	input.onkeyup = (e) => handle_onkeyup(e, input, min, max)
-	input.onblur = (e) => handle_on_mouseleave_and_blur(e, input, min)
-	input.onmouseleave = (e) => handle_on_mouseleave_and_blur(e, input, min)
-
-	shadow.append(input)
-	shadow.adoptedStyleSheets = [sheet]
-	return el
-
-	//handlers
-
-	function handle_onkeyup (e, input, min, max) {
-		const val = Number(e.target.value)
-		const min_len = min.toString().length
-		const val_len = val.toString().length
-		if (val > max) input.value = max
-		else if (min_len === val_len && val < min) input.value = min
-
-		notify({ from:name, type:'update', body:val })
-	}
-
-	function handle_on_mouseleave_and_blur(e, input, min) {
-		const val = Number(e.target.value)
-		if (val < min) input.value = ''
-	}
-
-}
-
-function get_theme () {
-  return `
+    function get_theme () {
+      return `
 	:host {
 	  --b: 0, 0%;
 	  --color-white: var(--b), 100%;
@@ -102,57 +102,57 @@ function get_theme () {
 	  -webkit-appearance: none;
 	}
   `
-}
-
-},{}],3:[function(require,module,exports){
-const range = require('range-slider-mazim')
-const input = require('input-integer-ui-mazim')
-
-module.exports = range_slider_integer
-
-function range_slider_integer (opts) {
-    const state = {
-
     }
-    const el = document.createElement('div')
-    const shadow = el.attachShadow({ mode: 'closed' })
-    
-    const range_slider = range(opts, protocol)
-    const input_integer = input(opts, protocol)
+  }, {}],
+  3: [function (require, module, exports) {
+    const range = require('range-slider-mazim')
+    const input = require('input-integer-ui-mazim')
 
-    const rsi = document.createElement('div')
-    rsi.classList.add('rsi')
+    module.exports = range_slider_integer
 
-    const style = document.createElement('style')
-    style.textContent = get_theme()
+    function range_slider_integer (opts) {
+      const state = {
 
-    rsi.append(range_slider, input_integer)
-    shadow.append(rsi, style)
+      }
+      const el = document.createElement('div')
+      const shadow = el.attachShadow({ mode: 'closed' })
 
-    return el
+      const range_slider = range(opts, protocol)
+      const input_integer = input(opts, protocol)
 
-    function protocol (message, notify) {
+      const rsi = document.createElement('div')
+      rsi.classList.add('rsi')
+
+      const style = document.createElement('style')
+      style.textContent = get_theme()
+
+      rsi.append(range_slider, input_integer)
+      shadow.append(rsi, style)
+
+      return el
+
+      function protocol (message, notify) {
         const { from } = message
-        state[from] = { value:0, notify }
-        
-        return listen
-    }
+        state[from] = { value: 0, notify }
 
-    function listen (message) {
-        const { from, type, body } = message 
+        return listen
+      }
+
+      function listen (message) {
+        const { from, type, body } = message
         state[from].value = body
 
         if (type == 'update') {
-            var notify 
-            if (from == 'range-0') notify = state['input-integer-0'].notify
-            else if (from == 'input-integer-0') notify = state['range-0'].notify
-            notify({type, body})
+          let notify
+          if (from == 'range-0') notify = state['input-integer-0'].notify
+          else if (from == 'input-integer-0') notify = state['range-0'].notify
+          notify({ type, body })
         }
+      }
     }
-}
 
-function get_theme () {
-    return `
+    function get_theme () {
+      return `
         .rsi {
             padding: 8%;
             display: grid;
@@ -161,66 +161,65 @@ function get_theme () {
             align-items: center;
         }
     `
-}
+    }
+  }, { 'input-integer-ui-mazim': 2, 'range-slider-mazim': 4 }],
+  4: [function (require, module, exports) {
+    module.exports = rangeSlider
 
-},{"input-integer-ui-mazim":2,"range-slider-mazim":4}],4:[function(require,module,exports){
-module.exports = rangeSlider
+    let id = 0
 
-var id = 0
+    function rangeSlider (opts, protocol) {
+      const name = `range-${id++}`
+      const { min = 1, max = 5 } = opts
 
-function rangeSlider(opts, protocol) {
-    const name = `range-${id++}`
-    const { min=1, max=5} = opts
+      const el = document.createElement('div')
+      el.classList.add('container')
 
-    const el = document.createElement('div') 
-    el.classList.add('container')
+      const shadow = el.attachShadow({ mode: 'closed' })
 
-    const shadow = el.attachShadow({ mode: 'closed' })
-    
-    input = document.createElement('input')
-    input.type = 'range'
-    input.min = min
-    input.max = max
-    input.value = min
+      input = document.createElement('input')
+      input.type = 'range'
+      input.min = min
+      input.max = max
+      input.value = min
 
-    input.oninput = handle_input
+      input.oninput = handle_input
 
-    notify = protocol({ from:name }, listen)
-    function listen (message) {
+      notify = protocol({ from: name }, listen)
+      function listen (message) {
         const { type, body } = message
         if (type == 'update') input.value = body
-        fill.style.width = `${(body/max) * 100}%`
+        fill.style.width = `${(body / max) * 100}%`
         input.focus()
-    }
+      }
 
-    bar = document.createElement('div')
-    bar.classList.add('bar')
+      bar = document.createElement('div')
+      bar.classList.add('bar')
 
-    
-    ruler = document.createElement('div')
-    ruler.classList.add('ruler')
+      ruler = document.createElement('div')
+      ruler.classList.add('ruler')
 
-    fill = document.createElement('div')
-    fill.classList.add('fill')
+      fill = document.createElement('div')
+      fill.classList.add('fill')
 
-    bar.append(ruler, fill)
+      bar.append(ruler, fill)
 
-    style = document.createElement('style')
-    style.textContent = get_theme()
+      style = document.createElement('style')
+      style.textContent = get_theme()
 
-    shadow.append(style, input, bar)
-    return el
+      shadow.append(style, input, bar)
+      return el
 
-    // handlers
-    function handle_input(e) {
+      // handlers
+      function handle_input (e) {
         const val = Number(e.target.value)
-        fill.style.width = `${(val/max) * 100}%`
-        notify({ from:name, type:'update', body: val})
+        fill.style.width = `${(val / max) * 100}%`
+        notify({ from: name, type: 'update', body: val })
+      }
     }
-}
 
-function get_theme() {
-    return `
+    function get_theme () {
+      return `
         :host { box-sizing: border-box; }
         *, *:before, *:after { box-sizing: inherit; }
         :host {
@@ -313,6 +312,6 @@ function get_theme() {
         }
 
     `
-}
-
-},{}]},{},[1]);
+    }
+  }, {}]
+}, {}, [1])

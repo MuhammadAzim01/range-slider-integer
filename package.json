@@ -6,16 +6,24 @@
   "scripts": {
     "start": "budo demo/demo.js:bundle.js --live --open",
     "build": "browserify demo/demo.js > bundle.js",
+    "lint": "standardx --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "mazim",
   "license": "MIT",
   "devDependencies": {
     "browserify": "^17.0.1",
-    "budo": "^11.8.4"
+    "budo": "^11.8.4",
+    "standardx": "^7.0.0"
   },
   "dependencies": {
     "input-integer-ui-mazim": "^0.0.3",
     "range-slider-mazim": "^0.0.2"
+  },
+  "standardx": {
+    "rules": {
+      "camelcase": "off",
+      "indent": ["error", 2]
+    }
   }
 }
